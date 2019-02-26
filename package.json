@@ -11,6 +11,7 @@
     "build:dev": "cross-env NODE_ENV=development npm run _build",
     "build:prod": "cross-env NODE_ENV=production npm run _build",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "watch:test": "jest --watch",
     "lint": "tslint -p ./tsconfig.json",
     "ts-node": "ts-node --files"
