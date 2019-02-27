@@ -89,9 +89,9 @@ export const loadAll = async (
 	};
 };
 
-export const getVersions = async (dataPath: string) => {
+export const getVersions = async (dataPath: string, limit: number) => {
 	const versions = await findVersions(dataPath);
-	return versions;
+	return versions.slice(0, limit);
 };
 
 export const getVersionInfo = async (dataPath: string, version: string) => {

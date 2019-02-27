@@ -86,7 +86,12 @@ const nadeshiko = (options: Options) => {
 
 	// version
 	router.get('/versions/', async (req, res) => {
-		const versions = await C.getVersions(dataPath);
+		const limit = parseInt(req.query.limit || '20', 10);
+		if (isNaN(limit)) {
+			throw new Error(`invalid limit: ${req.query.limit}`);
+		}
+
+		const versions = await C.getVersions(dataPath, limit);
 		res.json(versions);
 	});
 
