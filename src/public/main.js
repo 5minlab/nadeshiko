@@ -5,14 +5,14 @@ class TableRow extends React.Component {
 		return (
 			<tr key={idx}>
 				<td>
-					<a href={`/v1/tables/${table}`} target="_blank">{table}</a>
+					<a href={`./tables/${table}`} target="_blank">{table}</a>
 				</td>
 				<td>
 					<form>
 						<button
 							class="small ui button"
 							type="submit"
-							formaction={`/v1/tables/${table}/sync`}
+							formaction={`./tables/${table}/sync`}
 							formmethod="post"
 							formtarget="_blank"
 						>
@@ -33,7 +33,7 @@ class CommandButtonList extends React.Component {
 					<button
 						class="ui button"
 						type="submit"
-						formaction={`/v1/commands/fetch`}
+						formaction={`./commands/fetch`}
 						formmethod="post"
 						formtarget="_blank"
 					>
@@ -43,7 +43,7 @@ class CommandButtonList extends React.Component {
 					<button
 						class="ui button"
 						type="submit"
-						formaction={`/v1/commands/load`}
+						formaction={`./commands/load`}
 						formmethod="post"
 						formtarget="_blank"
 					>
@@ -107,7 +107,7 @@ class App extends React.Component {
 	}
 
 	async fetchMetadata() {
-		const resp = await fetch('/v1/metadata');
+		const resp = await fetch('./metadata');
 		const data = await resp.json();
 		this.setState({ metadata: data });
 	}
