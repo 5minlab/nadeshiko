@@ -17,7 +17,11 @@ export const findLatestVersion = async (dataPath: string) => {
 
 export const findVersions = async (dataPath: string) => {
 	const list = await readDirectory(dataPath);
-	return list;
+	return list.filter((x) => versionRegexp.test(x));
+};
+
+export const filterVersions = (list: string[]) => {
+	return list.filter((x) => versionRegexp.test(x));
 };
 
 const isMetadata = (x: string) => x.startsWith('metadata-');
@@ -29,11 +33,14 @@ const readDirectory = async (dataPath: string) => {
 
 export const findVersionInfo = async (dataPath: string, version: string) => {
 	const fp = path.resolve(dataPath, version);
-	const list = (await readDirectory(fp))
-		.map((x) => x.replace('.yaml', ''))
-		.filter((x) => versionRegexp.test(x));
-	const metadataList = list.filter((x) => isMetadata(x));
-	const contentList = list.filter((x) => !isMetadata(x));
+	const list = await readDirectory(fp);
+	return makeVersionInfo(list);
+};
+
+export const makeVersionInfo = (list: string[]) => {
+	const names = list.map((x) => x.replace('.yaml', ''));
+	const metadataList = names.filter((x) => isMetadata(x));
+	const contentList = names.filter((x) => !isMetadata(x));
 	return {
 		metadata: metadataList,
 		contents: contentList,
