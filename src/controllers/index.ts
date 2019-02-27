@@ -1,10 +1,8 @@
-import * as S from '../sheets';
 import { fetch } from '../commands/fetch';
 import * as fslib from '../helpers/fslib';
 import { TableCache } from '../cache';
 import { DataSource } from '../datasource';
 import { makeTable } from '../sheets';
-import { OAuth2Client } from 'googleapis-common';
 
 export const getMetadata = async (cache: TableCache) => {
 	const metadata = await cache.loadMetadata();
@@ -17,6 +15,15 @@ export const getTable = async (cache: TableCache, name: string) => {
 		return table;
 	} else {
 		throw new Error('table not found');
+	}
+};
+
+export const delTable = async (cache: TableCache, name: string) => {
+	const result = await cache.dropTable(name);
+	if (result) {
+		return true;
+	} else {
+		throw new Error('no table deleted');
 	}
 };
 

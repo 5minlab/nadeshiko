@@ -28,6 +28,9 @@ export const makeTable = (name: string, values: string[][]) => {
 	const firstRow = values[0];
 	const attrs = makeAttributes(firstRow);
 
+	const idattr = attrs.find((a) => a.name === 'id');
+	if (!idattr) { throw new Error('id attribute not found'); }
+
 	const records = values.slice(1).map((row) => makeRecord(attrs, row));
 	const items = records.map((r) => r.value);
 

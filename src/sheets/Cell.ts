@@ -11,4 +11,6 @@ export class Cell {
 
 	public get value() { return this.attr.cast(this.data); }
 	public get key() { return this.attr.name; }
+	public get ty() { return this.attr.ty; }
+	public get raw() { return this.data; }
 }

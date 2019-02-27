@@ -4,7 +4,17 @@ export enum AttributeType {
 	String,
 	Boolean,
 	Date,
+	Raw,
 }
+
+const attributeList: Array<{ ty: AttributeType, prefix: string }> = [
+	{ ty: AttributeType.Integer, prefix: 'i_' },
+	{ ty: AttributeType.Float, prefix: 'f_' },
+	{ ty: AttributeType.String, prefix: 's_' },
+	{ ty: AttributeType.Boolean, prefix: 'b_' },
+	{ ty: AttributeType.Date, prefix: 'd_' },
+	{ ty: AttributeType.Raw, prefix: 'r_' },
+];
 
 export type AttributeValueType = (
 	number | boolean | Date | string | null | undefined
@@ -20,20 +30,14 @@ export class Attribute {
 	}
 
 	public static make(s: string) {
-		const table: Array<[AttributeType, string]> = [
-			[AttributeType.Integer, 'i_'],
-			[AttributeType.Float, 'f_'],
-			[AttributeType.String, 's_'],
-			[AttributeType.Boolean, 'b_'],
-			[AttributeType.Date, 'd_'],
-		];
-		for (const pair of table) {
-			const prefix = pair[1];
-			if (s.startsWith(prefix)) {
-				return new Attribute(pair[0], s.replace(prefix, ''));
-			}
+		if (!s.length) { throw new Error('blank attribute name'); }
+		const founds = attributeList.filter((pair) => s.startsWith(pair.prefix));
+		if (founds.length > 0) {
+			const found = founds[0];
+			return new Attribute(found.ty, s.replace(found.prefix, ''));
+		} else {
+			return new Attribute(AttributeType.Raw, s);
 		}
-		throw new Error(`cannot make attribute: ${s}`);
 	}
 
 	public cast(v: string | undefined) {
@@ -42,7 +46,8 @@ export class Attribute {
 			case AttributeType.Float: return castFloat(v);
 			case AttributeType.Boolean: return castBoolean(v);
 			case AttributeType.Date: return castDate(v);
-			case AttributeType.String: return v || '';
+			case AttributeType.String: return castString(v);
+			case AttributeType.Raw: return castRaw(v);
 			default: return v;
 		}
 	}
@@ -74,6 +79,14 @@ const castBoolean = (x: string | undefined) => {
 
 const castDate = (x: string | undefined) => {
 	return x ? parseDate(x) : null;
+};
+
+const castRaw = (x: string | undefined) => {
+	return x;
+};
+
+const castString = (x: string | undefined) => {
+	return x || '';
 };
 
 const parseDate = (x: string) => {

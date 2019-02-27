@@ -17,6 +17,14 @@ const makeReferencesKey = () => {
 	return key;
 };
 
+const compareRecordId = <T extends RecordType>(a: T, b: T) => {
+	if (typeof a.id === 'number' && typeof b.id === 'number') {
+		return a.id - b.id;
+	} else if (typeof a.id === 'string' && typeof b.id === 'string') {
+		return a.id.localeCompare(b.id);
+	}
+	throw new Error(`invalid format: compare ${typeof a.id} and ${typeof b.id}`);
+};
 
 export class TableCache {
 	private readonly redis: Redis.Redis;
@@ -45,10 +53,11 @@ export class TableCache {
 			const val = JSON.parse(data) as T;
 			return { val };
 		});
-		return items.sort((a, b) => a.val.id - b.val.id).map((item) => item.val);
+		return items.sort((a, b) => compareRecordId(a.val, b.val))
+			.map((item) => item.val);
 	}
 
-	public async get<T extends RecordType>(name: string, id: number) {
+	public async get<T extends RecordType>(name: string, id: number | string) {
 		const key = makeTableKey(name);
 		const field = id.toString();
 		const found = await this.redis.hget(key, field);
@@ -67,6 +76,12 @@ export class TableCache {
 	public async loadTable<T extends RecordType>(name: string) {
 		const items = await this.mget<T>(name);
 		return new Table(name, items);
+	}
+
+	public async dropTable(name: string) {
+		const key = makeTableKey(name);
+		const result = await this.redis.del(key);
+		return result ? true : false;
 	}
 
 	public async saveMetadata(metadata: Metadata) {
@@ -88,5 +103,12 @@ export class TableCache {
 		const refs = JSON.parse(referenceData) as Reference[];
 		const rels = JSON.parse(constraintData) as Constraint[];
 		return new Metadata(refs, rels);
+	}
+
+	public async dropMetadata() {
+		await this.redis.del(
+			makeReferencesKey(),
+			makeConstraintsKey(),
+		);
 	}
 }

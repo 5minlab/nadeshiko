@@ -65,6 +65,12 @@ const nadeshiko = (options: Options) => {
 		res.json({ items });
 	});
 
+	router.delete('/tables/:table', async (req, res) => {
+		const { table } = await P.tableSchema.validate(req.params);
+		const ok = await C.delTable(cache, table);
+		res.json({ ok });
+	});
+
 	// record
 	router.get('/tables/:table/:id', async (req, res) => {
 		const { table, id } = await P.itemSchema.validate(req.params);

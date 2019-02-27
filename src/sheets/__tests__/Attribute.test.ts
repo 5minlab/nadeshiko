@@ -44,8 +44,14 @@ describe('Attribute', () => {
 		}
 	});
 
-	test('invalid', () => {
-		expect(() => Attribute.make('x_fail')).toThrow();
+	test('raw', () => {
+		const f = Attribute.make('r_data');
+		expect(f.cast('text')).toEqual('text');
+		expect(f.cast(undefined)).toEqual(undefined);
+	});
+
+	test('blank', () => {
+		expect(() => Attribute.make('')).toThrow();
 	});
 });
 
@@ -53,10 +59,11 @@ describe('makeAttributes', () => {
 	test('ok', () => {
 		const row = [
 			'i_id',
+			'f_rate',
 			's_name',
 			'b_is_default',
-			'f_rate',
 			'd_deleted_at',
+			'r_data',
 		];
 		const attrs = makeAttributes(row);
 		expect(attrs).toHaveLength(row.length);

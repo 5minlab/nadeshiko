@@ -1,56 +1,107 @@
 import RedisMock from 'ioredis-mock';
-import { RecordType } from '../../sheets';
+import { RecordType, Table } from '../../sheets';
 import { TableCache } from '..';
 import * as faker from 'faker';
 
-const table = faker.random.alphaNumeric(8);
+const name = faker.random.alphaNumeric(8);
 const redis = new RedisMock();
 const cache = new TableCache(redis);
+
+const r1: RecordType = { id: 1, name: 'foo' };
+const r2: RecordType = { id: 2, name: 'bar' };
 
 beforeEach(async () => {
 	await redis.flushall();
 });
 
-describe('mset - mget', () => {
-	test('ok', async () => {
-		const v1: RecordType = { id: 1, name: 'foo' };
-		const v2: RecordType = { id: 2, name: 'bar' };
-		const items = [v1, v2];
+describe('saveTable - loadTable', () => {
+	test('number id', async () => {
+		const items = [r1, r2];
+		const table = new Table(name, items);
 
-		await cache.mset(table, items);
-		const actual = await cache.mget<RecordType>(table);
-		expect(actual).toEqual(items);
+		await cache.saveTable(table);
+		expect(await cache.loadTable(name))
+			.toEqual(table);
 	});
 
-	test('blank', async () => {
-		const table = faker.random.alphaNumeric(8);
-		await cache.mset(table, []);
-		const actual = await cache.mget<RecordType>(table);
-		expect(actual).toEqual([]);
+	test('string id', async () => {
+		const name = faker.random.alphaNumeric(8);
+		const s1: RecordType = { id: 'aaa', name: 'foo' };
+		const s2: RecordType = { id: 'bbb', name: 'bar' };
+		const items = [s1, s2];
+		const table = new Table(name, items);
+
+		await cache.saveTable(table);
+		expect(await cache.loadTable(name))
+			.toEqual(table);
+	});
+
+	test('blank table', async () => {
+		const name = faker.random.alphaNumeric(8);
+		const table = new Table(name, []);
+		await cache.saveTable(table);
+		expect(await cache.loadTable(name))
+			.toEqual(table);
+	});
+
+	test('table not found', async () => {
+		const name = faker.random.alphaNumeric(8);
+		expect(await cache.loadTable(name))
+			.toEqual(new Table(name, []));
+	});
+});
+
+describe('dropTable', () => {
+	const name = faker.random.alphaNumeric(8);
+
+	beforeEach(async () => {
+		const items = [r1, r2];
+		const table = new Table(name, items);
+		await cache.saveTable(table);
+	});
+
+	test('ok', async () => {
+		const result = await cache.dropTable(name);
+		expect(result).toBeTruthy();
+		expect(await cache.loadTable(name))
+			.toEqual(new Table(name, []));
+	});
+
+	test('no table deleted', async () => {
+		const name = faker.random.alphaNumeric(8);
+		const result = await cache.dropTable(name);
+		expect(result).toBeFalsy();
 	});
 });
 
 describe('get', () => {
-	const v: RecordType = { id: 3, name: 'spam' };
+	const r1: RecordType = { id: 3, name: 'spam' };
+	const r2: RecordType = { id: 'sample', name: 'jfdsl' };
 
 	beforeEach(async () => {
-		const items = [v];
-		await cache.mset(table, items);
+		const items = [r1, r2];
+		const table = new Table(name, items);
+		await cache.saveTable(table);
 	});
 
-	test('ok', async () => {
-		const item = await cache.get(table, v.id);
-		expect(item).toEqual(v);
+	test('number id', async () => {
+		const item = await cache.get(name, r1.id);
+		expect(item).toEqual(r1);
+	});
+
+	test('string id', async () => {
+		const item = await cache.get(name, r2.id);
+		expect(item).toEqual(r2);
 	});
 
 	test('id not found', async () => {
-		const item = await cache.get(table, -1);
+		const item = await cache.get(name, -1);
 		expect(item).toBeUndefined();
 	});
 
 	test('table not found', async () => {
-		const table = faker.random.alphaNumeric(8);
-		const item = await cache.get(table, -1);
+		const name = faker.random.alphaNumeric(8);
+		const item = await cache.get(name, -1);
 		expect(item).toBeUndefined();
 	});
 });
