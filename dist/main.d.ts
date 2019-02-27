@@ -13,7 +13,7 @@ declare module 'nadeshiko' {
         serviceKey: ServiceKey;
     }
     const nadeshiko: (options: Options) => import("express-serve-static-core").Router;
-    export default nadeshiko;
+    export = nadeshiko;
 }
 
 declare module 'nadeshiko/datasource/gsheet' {
@@ -97,7 +97,8 @@ declare module 'nadeshiko/sheets/Attribute' {
         Float = 1,
         String = 2,
         Boolean = 3,
-        Date = 4
+        Date = 4,
+        Raw = 5
     }
     export type AttributeValueType = (number | boolean | Date | string | null | undefined);
     export class Attribute {
@@ -114,9 +115,10 @@ declare module 'nadeshiko/sheets/Metadata' {
     import { Constraint } from 'nadeshiko/sheets/Constraint';
     import { Reference } from 'nadeshiko/sheets/Reference';
     export class Metadata {
+        readonly version: string;
         readonly references: Reference[];
         readonly constraints: Constraint[];
-        constructor(references: Reference[], constraints: Constraint[]);
+        constructor(version: string, references: Reference[], constraints: Constraint[]);
         save(dataPath: string): Promise<[void, void]>;
         findReference(table: string): Reference | undefined;
     }
@@ -137,8 +139,10 @@ declare module 'nadeshiko/sheets/Table' {
 declare module 'nadeshiko/sheets/Record' {
     import { Attribute, AttributeValueType } from 'nadeshiko/sheets/Attribute';
     import { Cell } from 'nadeshiko/sheets/Cell';
+    export const INVALID_NUM_ID = -987654321;
+    export const INVALID_STR_ID = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     export interface RecordType {
-        id: number;
+        id: number | string;
         [key: string]: AttributeValueType;
     }
     export class Record {
@@ -154,6 +158,8 @@ declare module 'nadeshiko/sheets/Cell' {
         constructor(attr: Attribute, data: string);
         readonly value: string | number | boolean | Date | null | undefined;
         readonly key: string;
+        readonly ty: import("./Attribute").AttributeType;
+        readonly raw: string;
     }
 }
 
