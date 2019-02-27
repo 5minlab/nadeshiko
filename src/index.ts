@@ -84,6 +84,22 @@ const nadeshiko = (options: Options) => {
 		res.json(metadata);
 	});
 
+	// version
+	router.get('/versions/', async (req, res) => {
+		const versions = await C.getVersions(dataPath);
+		res.json(versions);
+	});
+
+	router.get('/versions/:version', async (req, res) => {
+		const version: string = req.params.version;
+		const info = await C.getVersionInfo(dataPath, version);
+		res.json({
+			version,
+			metadata: info.metadata,
+			contents: info.contents,
+		});
+	});
+
 	// commands
 	router.post('/commands/fetch', async (req, res) => {
 		const datasource = await getDataSource();

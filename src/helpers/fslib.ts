@@ -58,8 +58,10 @@ export const loadMetadata = async (dataPath: string, version: string) => {
 		return items;
 	};
 
-	return new Metadata(
+	const data = await Promise.all([
 		await loadReferences(),
 		await loadConstraints(),
-	);
+	]);
+
+	return new Metadata(version, ...data);
 };

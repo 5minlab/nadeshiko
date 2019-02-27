@@ -39,16 +39,6 @@ class CommandButtonList extends React.Component {
 					>
 						fetch
 					</button>
-
-					<button
-						class="ui button"
-						type="submit"
-						formaction={`./commands/load`}
-						formmethod="post"
-						formtarget="_blank"
-					>
-						load
-					</button>
 				</form>
 			</div>
 		);
@@ -58,11 +48,12 @@ class CommandButtonList extends React.Component {
 class MetadataView extends React.Component {
 	render() {
 		const { metadata } = this.props;
-		const { references, constraints } = metadata;
+		const { version, references, constraints } = metadata;
 		return (
 			<div>
+				<h3>version: {version}</h3>
 				<h3>references</h3>
-				<table class="ui celled compact table">
+				<table class="ui very compact table">
 					<thead>
 						<tr>
 							<th>table</th>
@@ -90,6 +81,50 @@ class MetadataView extends React.Component {
 	}
 }
 
+class VersionRow extends React.Component {
+	render() {
+		const { version } = this.props;
+		return (
+			<tr>
+				<td>
+					<a href={`./versions/${version}`} target="_blank">{version}</a>
+				</td>
+				<td>
+					<form method="post" action="./commands/load">
+						<input type="hidden" name="version" value={version} />
+						<button
+							class="ui small button"
+							type="submit"
+							formtarget="_blank"
+						>
+							load
+						</button>
+					</form>
+				</td>
+			</tr>
+		);
+	}
+}
+
+class VersionList extends React.Component {
+	render() {
+		const { versions } = this.props;
+		return (
+			<table class="ui very compact selectable table">
+				<thead>
+					<tr>
+						<th>version</th>
+						<th>actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{versions.map((version, idx) => <VersionRow key={idx} version={version} />)}
+				</tbody>
+			</table>
+		);
+	}
+}
+
 class App extends React.Component {
 	constructor(props) {
 		super(props);
@@ -99,17 +134,24 @@ class App extends React.Component {
 				constraints: [],
 				references: [],
 			},
+			versions: [],
 		};
 	}
 
 	componentDidMount() {
 		this.fetchMetadata();
+		this.fetchVersions();
 	}
 
 	async fetchMetadata() {
 		const resp = await fetch('./metadata');
 		const data = await resp.json();
 		this.setState({ metadata: data });
+	}
+	async fetchVersions() {
+		const resp = await fetch('./versions');
+		const data = await resp.json();
+		this.setState({ versions: data });
 	}
 
 	getTables() {
@@ -120,7 +162,7 @@ class App extends React.Component {
 	}
 
 	render() {
-		const { metadata } = this.state;
+		const { metadata, versions } = this.state;
 		const tables = this.getTables();
 
 		return (
@@ -131,7 +173,7 @@ class App extends React.Component {
 				<CommandButtonList />
 
 				<h2>tables</h2>
-				<table class="ui selectable celled compact table">
+				<table class="ui very compact selectable table">
 					<thead>
 						<tr>
 							<th>table</th>
@@ -145,6 +187,9 @@ class App extends React.Component {
 
 				<h2>metadata</h2>
 				<MetadataView metadata={metadata} />
+
+				<h2>versions</h2>
+				<VersionList versions={versions} />
 			</div>
 		);
 	}

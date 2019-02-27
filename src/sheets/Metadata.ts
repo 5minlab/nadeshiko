@@ -5,13 +5,16 @@ import { Constraint } from './Constraint';
 import { Reference } from './Reference';
 
 export class Metadata {
+	public readonly version: string;
 	public readonly references: Reference[];
 	public readonly constraints: Constraint[];
 
 	constructor(
+		version: string,
 		references: Reference[],
 		constraints: Constraint[],
 	) {
+		this.version = version;
 		this.references = references;
 		this.constraints = constraints;
 	}

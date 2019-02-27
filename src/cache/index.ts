@@ -17,6 +17,11 @@ const makeReferencesKey = () => {
 	return key;
 };
 
+const makeVersionKey = () => {
+	const key = `nadeshiko:version`;
+	return key;
+};
+
 const compareRecordId = <T extends RecordType>(a: T, b: T) => {
 	if (typeof a.id === 'number' && typeof b.id === 'number') {
 		return a.id - b.id;
@@ -86,6 +91,8 @@ export class TableCache {
 
 	public async saveMetadata(metadata: Metadata) {
 		await this.redis.mset(
+			makeVersionKey(),
+			metadata.version,
 			makeReferencesKey(),
 			JSON.stringify(metadata.references),
 			makeConstraintsKey(),
@@ -93,20 +100,33 @@ export class TableCache {
 		);
 	}
 
+	public async touchVersion() {
+		const key = makeVersionKey();
+		const curr = await this.redis.get(key);
+		if (curr) {
+			if (!curr.endsWith('-dirty')) {
+				const next = curr + '-dirty';
+				await this.redis.set(key, next);
+			}
+		}
+	}
+
 	public async loadMetadata() {
+		const versionData = await this.redis.get(makeVersionKey());
 		const referenceData = await this.redis.get(makeReferencesKey());
 		const constraintData = await this.redis.get(makeConstraintsKey());
-		if (!referenceData || !constraintData) {
-			return new Metadata([], []);
+		if (!versionData || !referenceData || !constraintData) {
+			return new Metadata('NULL', [], []);
 		}
 
-		const refs = JSON.parse(referenceData) as Reference[];
-		const rels = JSON.parse(constraintData) as Constraint[];
-		return new Metadata(refs, rels);
+		const references = JSON.parse(referenceData) as Reference[];
+		const constraints = JSON.parse(constraintData) as Constraint[];
+		return new Metadata(versionData, references, constraints);
 	}
 
 	public async dropMetadata() {
 		await this.redis.del(
+			makeVersionKey(),
 			makeReferencesKey(),
 			makeConstraintsKey(),
 		);

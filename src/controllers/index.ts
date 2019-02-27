@@ -3,6 +3,7 @@ import * as fslib from '../helpers/fslib';
 import { TableCache } from '../cache';
 import { DataSource } from '../datasource';
 import { makeTable } from '../sheets';
+import { findVersions, findVersionInfo } from '../helpers';
 
 export const getMetadata = async (cache: TableCache) => {
 	const metadata = await cache.loadMetadata();
@@ -51,6 +52,7 @@ export const syncTable = async (
 	const found = founds[0];
 	const sheet = makeTable(found.name, found.values);
 	await cache.saveTable(sheet);
+	await cache.touchVersion();
 	return true;
 };
 
@@ -87,4 +89,12 @@ export const loadAll = async (
 	};
 };
 
+export const getVersions = async (dataPath: string) => {
+	const versions = await findVersions(dataPath);
+	return versions;
+};
 
+export const getVersionInfo = async (dataPath: string, version: string) => {
+	const info = await findVersionInfo(dataPath, version);
+	return info;
+};

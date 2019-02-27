@@ -15,20 +15,21 @@ export const fetch = async (
 	ds: DataSource,
 	dataPath: string,
 ) => {
+	const version = makeVersion(new Date());
+
 	const metadataList = await Promise.all([
 		ds.fetchReferences(),
 		ds.fetchConstraints(),
 	]);
 	const references = makeReferences(metadataList[0]);
 	const constraints = makeConstraints(metadataList[1]);
-	const metadata = new Metadata(references, constraints);
+	const metadata = new Metadata(version, references, constraints);
 
 	const sheets = await ds.fetchSheets(references);
 	const tables = sheets.map((sheet) => {
 		return makeTable(sheet.name, sheet.values);
 	});
 
-	const version = makeVersion(new Date());
 	const dstPath = path.resolve(dataPath, version);
 	await fs.mkdir(dstPath);
 
