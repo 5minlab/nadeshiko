@@ -106,4 +106,4 @@ const nadeshiko = (options: Options) => {
 
 	return router;
 };
-export default nadeshiko;
+export = nadeshiko;
