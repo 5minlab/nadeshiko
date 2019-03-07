@@ -61,8 +61,8 @@ const nadeshiko = (options: Options) => {
 
 	router.get('/tables/:table', async (req, res) => {
 		const { table } = await P.tableSchema.validate(req.params);
-		const items = await C.getTable(cache, table);
-		res.json({ items });
+		const content = await C.getTable(cache, table);
+		res.json(content);
 	});
 
 	router.delete('/tables/:table', async (req, res) => {
@@ -75,7 +75,7 @@ const nadeshiko = (options: Options) => {
 	router.get('/tables/:table/:id', async (req, res) => {
 		const { table, id } = await P.itemSchema.validate(req.params);
 		const item = await C.getRecord(cache, table, id);
-		res.json({ item });
+		res.json(item);
 	});
 
 	// metadata
