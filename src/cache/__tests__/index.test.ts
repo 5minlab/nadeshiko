@@ -5,7 +5,7 @@ import * as faker from 'faker';
 
 const name = faker.random.alphaNumeric(8);
 const redis = new RedisMock();
-const cache = new TableCache(redis);
+const cache = new TableCache(redis, 'test');
 
 const r1: RecordType = { id: 1, name: 'foo' };
 const r2: RecordType = { id: 2, name: 'bar' };

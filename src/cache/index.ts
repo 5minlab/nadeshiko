@@ -2,23 +2,23 @@ import Redis from 'ioredis';
 import { RecordType, Table, Metadata, Reference, Constraint } from '../sheets';
 import * as _ from 'lodash';
 
-const makeTableKey = (table: string) => {
-	const key = `nadeshiko:${table}`;
+const makeTableKey = (prefix: string, table: string) => {
+	const key = `${prefix}:${table}`;
 	return key;
 };
 
-const makeConstraintsKey = () => {
-	const key = `nadeshiko:constraints`;
+const makeConstraintsKey = (prefix: string) => {
+	const key = `${prefix}:constraints`;
 	return key;
 };
 
-const makeReferencesKey = () => {
-	const key = `nadeshiko:references`;
+const makeReferencesKey = (prefix: string) => {
+	const key = `${prefix}:references`;
 	return key;
 };
 
-const makeVersionKey = () => {
-	const key = `nadeshiko:version`;
+const makeVersionKey = (prefix: string) => {
+	const key = `${prefix}:version`;
 	return key;
 };
 
@@ -33,14 +33,21 @@ const compareRecordId = <T extends RecordType>(a: T, b: T) => {
 
 export class TableCache {
 	private readonly redis: Redis.Redis;
+	private readonly prefix: string;
 
-	constructor(redis: Redis.Redis) {
+	constructor(redis: Redis.Redis, prefix: string) {
 		this.redis = redis;
+		this.prefix = prefix;
 	}
+
+	private makeTableKey = (table: string) => makeTableKey(this.prefix, table);
+	private makeConstraintsKey = () => makeConstraintsKey(this.prefix);
+	private makeReferencesKey = () => makeReferencesKey(this.prefix);
+	private makeVersionKey = () => makeVersionKey(this.prefix);
 
 	public async mset<T extends RecordType>(name: string, items: T[]) {
 		if (items.length === 0) { return; }
-		const key = makeTableKey(name);
+		const key = this.makeTableKey(name);
 		const args = _.flatten(items.map((item) => [
 			item.id.toString(),
 			JSON.stringify(item),
@@ -51,7 +58,7 @@ export class TableCache {
 	}
 
 	public async mget<T extends RecordType>(name: string) {
-		const key = makeTableKey(name);
+		const key = this.makeTableKey(name);
 		const founds: { [key: string]: string } = await this.redis.hgetall(key);
 		const values = _.values(founds);
 		const items = values.map((data) => {
@@ -63,7 +70,7 @@ export class TableCache {
 	}
 
 	public async get<T extends RecordType>(name: string, id: number | string) {
-		const key = makeTableKey(name);
+		const key = this.makeTableKey(name);
 		const field = id.toString();
 		const found = await this.redis.hget(key, field);
 		return found ? JSON.parse(found) as T : undefined;
@@ -73,7 +80,7 @@ export class TableCache {
 		const name = table.name;
 		const items = table.items;
 
-		const key = makeTableKey(name);
+		const key = this.makeTableKey(name);
 		await this.redis.del(key);
 		await this.mset(name, items);
 	}
@@ -84,24 +91,24 @@ export class TableCache {
 	}
 
 	public async dropTable(name: string) {
-		const key = makeTableKey(name);
+		const key = this.makeTableKey(name);
 		const result = await this.redis.del(key);
 		return result ? true : false;
 	}
 
 	public async saveMetadata(metadata: Metadata) {
 		await this.redis.mset(
-			makeVersionKey(),
+			this.makeVersionKey(),
 			metadata.version,
-			makeReferencesKey(),
+			this.makeReferencesKey(),
 			JSON.stringify(metadata.references),
-			makeConstraintsKey(),
+			this.makeConstraintsKey(),
 			JSON.stringify(metadata.constraints),
 		);
 	}
 
 	public async touchVersion() {
-		const key = makeVersionKey();
+		const key = this.makeVersionKey();
 		const curr = await this.redis.get(key);
 		if (curr) {
 			if (!curr.endsWith('-dirty')) {
@@ -112,9 +119,9 @@ export class TableCache {
 	}
 
 	public async loadMetadata() {
-		const versionData = await this.redis.get(makeVersionKey());
-		const referenceData = await this.redis.get(makeReferencesKey());
-		const constraintData = await this.redis.get(makeConstraintsKey());
+		const versionData = await this.redis.get(this.makeVersionKey());
+		const referenceData = await this.redis.get(this.makeReferencesKey());
+		const constraintData = await this.redis.get(this.makeConstraintsKey());
 		if (!versionData || !referenceData || !constraintData) {
 			return new Metadata('NULL', [], []);
 		}
@@ -126,9 +133,9 @@ export class TableCache {
 
 	public async dropMetadata() {
 		await this.redis.del(
-			makeVersionKey(),
-			makeReferencesKey(),
-			makeConstraintsKey(),
+			this.makeVersionKey(),
+			this.makeReferencesKey(),
+			this.makeConstraintsKey(),
 		);
 	}
 }

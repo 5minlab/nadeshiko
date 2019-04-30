@@ -16,6 +16,7 @@ interface Options {
 	redis: Redis.Redis;
 	dataPath: string;
 	serviceKey: ServiceKey;
+	prefix?: string;
 }
 
 const nadeshiko = (options: Options) => {
@@ -26,9 +27,10 @@ const nadeshiko = (options: Options) => {
 		redis,
 		dataPath,
 		serviceKey,
+		prefix,
 	} = options;
 
-	const cache = new TableCache(redis);
+	const cache = new TableCache(redis, prefix || 'nadeshiko');
 
 	let auth_inner: OAuth2Client;
 	const getAuth = async () => {

@@ -16,15 +16,15 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.get('/nadeshiko/', (req, res) => {
+app.get('/', (req, res) => {
 	res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
-app.get('/nadeshiko/main.js', (req, res) => {
+app.get('/main.js', (req, res) => {
 	res.sendFile(path.resolve(__dirname, 'public', 'main.js'));
 });
 
 const sheetID: string = process.env.SHEET_ID!;
-app.use('/nadeshiko', nadeshiko({
+app.use('/', nadeshiko({
 	redis: new Redis(6379, '127.0.0.1'),
 	metadataSheetId: sheetID,
 	dataPath: path.resolve(__dirname, 'tmp'),
@@ -32,6 +32,7 @@ app.use('/nadeshiko', nadeshiko({
 		client_email: secret.client_email,
 		private_key: secret.private_key,
 	},
+	prefix: 'nadeshiko-dev',
 }));
 
 const port = 4000;
