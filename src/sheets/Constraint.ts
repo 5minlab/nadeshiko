@@ -23,6 +23,8 @@ export const makeConstraint = (row: string[]): Constraint => {
 };
 
 export const makeConstraints = (values: string[][]): Constraint[] => {
+	if (values === undefined) { return []; }
+	// else...
 	return values.map((row) => makeConstraint(row));
 };
 
