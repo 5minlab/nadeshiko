@@ -90,3 +90,4 @@ sample/*.js
 sample/*.ts
 dist
 tmp
+secret/*
