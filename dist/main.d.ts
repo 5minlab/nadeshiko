@@ -11,6 +11,7 @@ declare module 'nadeshiko' {
         redis: Redis.Redis;
         dataPath: string;
         serviceKey: ServiceKey;
+        prefix?: string;
     }
     const nadeshiko: (options: Options) => import("express-serve-static-core").Router;
     export = nadeshiko;
