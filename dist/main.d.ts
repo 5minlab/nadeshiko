@@ -154,12 +154,12 @@ declare module 'nadeshiko/sheets/Record' {
 }
 
 declare module 'nadeshiko/sheets/Cell' {
-    import { Attribute } from 'nadeshiko/sheets/Attribute';
+    import { Attribute, AttributeType } from 'nadeshiko/sheets/Attribute';
     export class Cell {
         constructor(attr: Attribute, data: string);
         readonly value: string | number | boolean | Date | null | undefined;
         readonly key: string;
-        readonly ty: import("./Attribute").AttributeType;
+        readonly ty: AttributeType;
         readonly raw: string;
     }
 }

@@ -1,4 +1,7 @@
-import { Attribute } from './Attribute';
+import {
+	Attribute,
+	AttributeType,
+} from './Attribute';
 
 export class Cell {
 	private readonly attr: Attribute;
@@ -11,6 +14,6 @@ export class Cell {
 
 	public get value() { return this.attr.cast(this.data); }
 	public get key() { return this.attr.name; }
-	public get ty() { return this.attr.ty; }
+	public get ty(): AttributeType { return this.attr.ty; }
 	public get raw() { return this.data; }
 }
