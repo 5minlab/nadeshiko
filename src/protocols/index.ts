@@ -10,10 +10,10 @@ export const tableSchema = yup.object().shape<TableReq>({
 
 interface ItemReq {
 	table: string;
-	id: number;
+	id: number | string;
 }
 
 export const itemSchema = yup.object().shape<ItemReq>({
 	table: yup.string().required(),
-	id: yup.number().min(0).required(),
+	id: yup.mixed().required(),
 });

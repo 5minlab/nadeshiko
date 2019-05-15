@@ -28,7 +28,7 @@ export const delTable = async (cache: TableCache, name: string) => {
 	}
 };
 
-export const getRecord = async (cache: TableCache, name: string, id: number) => {
+export const getRecord = async (cache: TableCache, name: string, id: number | string) => {
 	const item = await cache.get(name, id);
 	if (item) {
 		return item;
