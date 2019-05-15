@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors');
 const Redis = require('ioredis');
 const path = require('path');
 const nadeshiko = require('./dist/main');
