@@ -1,15 +1,10 @@
-/*
-npm run ts-node src/sample.ts
-nadeshiko 개발용. 독립적으로 돌아갈수 있도록
-*/
-
-import express from 'express';
-import nadeshiko from './index';
-import Redis from 'ioredis';
-import path from 'path';
+const express = require('express');
+const Redis = require('ioredis');
+const path = require('path');
+const nadeshiko = require('./dist/main');
 
 // TODO modify
-const secret = require('../secret/gdrive.json');
+const secret = require('./secret/gdrive.json');
 
 const app = express();
 
@@ -17,13 +12,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.get('/', (req, res) => {
-	res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+	res.sendFile(path.resolve(__dirname, 'src/public/index.html'));
 });
 app.get('/main.js', (req, res) => {
-	res.sendFile(path.resolve(__dirname, 'public', 'main.js'));
+	res.sendFile(path.resolve(__dirname, 'src/public/main.js'));
 });
 
-const sheetID: string = process.env.SHEET_ID!;
+const sheetID = process.env.SHEET_ID;
 app.use('/', nadeshiko({
 	redis: new Redis(6379, '127.0.0.1'),
 	metadataSheetId: sheetID,
