@@ -91,3 +91,7 @@ sample/*.ts
 dist
 tmp
 secret/*
+
+
+!dist/main.js
+!dist/main.js.map

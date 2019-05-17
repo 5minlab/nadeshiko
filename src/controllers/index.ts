@@ -2,16 +2,19 @@ import { fetch } from '../commands/fetch';
 import * as fslib from '../helpers/fslib';
 import { TableCache } from '../cache';
 import { DataSource } from '../datasource';
-import { makeTable } from '../sheets';
+import { makeTable, Metadata, Table, RecordType } from '../sheets';
 import { findVersions, findVersionInfo } from '../helpers';
 
-export const getMetadata = async (cache: TableCache) => {
+export const getMetadata = async (cache: TableCache): Promise<Metadata> => {
 	const metadata = await cache.loadMetadata();
 	return metadata;
 };
 
-export const getTable = async (cache: TableCache, name: string) => {
-	const table = await cache.loadTable(name);
+export const getTable = async <T extends RecordType>(
+	cache: TableCache,
+	name: string,
+): Promise<Table<T>> => {
+	const table = await cache.loadTable<T>(name);
 	if (table.length) {
 		return table;
 	} else {

@@ -1,8 +1,8 @@
 import Redis from 'ioredis';
 import { RecordType, Table, Metadata, Reference, Constraint } from '../sheets';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
-const makeTableKey = (prefix: string, table: string) => {
+export const makeTableKey = (prefix: string, table: string) => {
 	const key = `${prefix}:${table}`;
 	return key;
 };

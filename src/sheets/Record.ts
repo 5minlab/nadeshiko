@@ -5,10 +5,11 @@ import { Cell } from './Cell';
 export const INVALID_NUM_ID = -987654321;
 export const INVALID_STR_ID = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-export interface RecordType {
+export type RecordType = {
 	id: number | string;
+} & {
 	[key: string]: AttributeValueType;
-}
+};
 
 export class Record {
 	private readonly cells: Cell[];
