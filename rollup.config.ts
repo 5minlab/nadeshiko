@@ -5,6 +5,7 @@ import camelCase from 'lodash.camelcase'
 import typescript from 'rollup-plugin-typescript2'
 import json from 'rollup-plugin-json'
 import builtins from 'builtin-modules'
+import copy from 'rollup-plugin-copy'
 
 const pkg = require('./package.json')
 
@@ -37,7 +38,13 @@ export default {
 		// Allow json resolution
 		json(),
 		// Compile TypeScript files
-		typescript({ useTsconfigDeclarationDir: true }),
+		typescript({
+			useTsconfigDeclarationDir: true,
+			// Only enable this if you need it
+			// (Error: Unknown object type "asyncfunction" for example)
+			// and make sure to run with clean: true once in a while and definitely before a release. (See #105)
+			objectHashIgnoreUnknownHack: true,
+		}),
 		// Allow bundling cjs modules (unlike webpack, rollup doesn't understand cjs)
 		commonjs(),
 		// Allow node_modules resolution, so you can use 'external' to control
@@ -47,5 +54,11 @@ export default {
 
 		// Resolve source maps to the original source
 		sourceMaps(),
+
+		copy({
+			targets: [
+				{ src: ['public/index.html', 'public/main.js'], dest: 'dist/public' },
+			]
+		})
 	],
 }
