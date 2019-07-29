@@ -1,6 +1,6 @@
 import fs from 'mz/fs'
 import path from 'path'
-import * as _ from 'lodash'
+import _ from 'lodash'
 import { makeVersion } from '../helpers'
 import { DataSource } from '../datasource'
 import { makeReferences, makeConstraints, Metadata, makeTable } from '../sheets'
