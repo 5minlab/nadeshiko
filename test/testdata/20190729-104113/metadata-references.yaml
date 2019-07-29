@@ -1,0 +1,6 @@
+- table: foo
+  range: 'A1:Z'
+  sheet: 1VT5_WF-dilhwcYqjYtzk1qaQllZwiBrj7lKnpKAfeH0
+- table: bar
+  range: 'A1:Z'
+  sheet: 1VT5_WF-dilhwcYqjYtzk1qaQllZwiBrj7lKnpKAfeH0

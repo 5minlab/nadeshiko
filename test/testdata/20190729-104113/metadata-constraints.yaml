@@ -1,0 +1,5 @@
+- type: fk
+  firstTable: testdata-bar
+  firstAttribute: parent_id
+  secondTable: testdata-foo
+  secondAttribute: id

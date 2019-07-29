@@ -1,0 +1,15 @@
+- name: testdb
+  is_default: true
+  comment: !<tag:yaml.org,2002:js/undefined> ''
+  deleted_at: null
+  id: 1
+- name: bar
+  is_default: false
+  comment: !<tag:yaml.org,2002:js/undefined> ''
+  deleted_at: null
+  id: 2
+- name: spam
+  is_default: false
+  comment: !<tag:yaml.org,2002:js/undefined> ''
+  deleted_at: 1995-09-07T01:40:52.000Z
+  id: 3
