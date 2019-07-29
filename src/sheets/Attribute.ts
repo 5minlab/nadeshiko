@@ -32,14 +32,17 @@ export class Attribute {
 	}
 
 	public static make(s: string) {
-		if (!s.length) { throw new Error('blank attribute name'); }
-		const founds = attributeList.filter((pair) => s.startsWith(pair.prefix));
-		if (founds.length > 0) {
-			const found = founds[0];
-			return new Attribute(found.ty, s.replace(found.prefix, ''));
-		} else {
-			return new Attribute(AttributeType.Raw, s);
+		if (!s.length) {
+			throw new Error('blank attribute name');
 		}
+
+		const founds = attributeList.filter((pair) => s.startsWith(pair.prefix));
+		if (founds.length === 0) {
+			throw new Error(`unknown attribute name: ${s}`);
+		}
+
+		const found = founds[0];
+		return new Attribute(found.ty, s.replace(found.prefix, ''));
 	}
 
 	public cast(v: string | undefined) {
@@ -51,7 +54,7 @@ export class Attribute {
 			case AttributeType.String: return castString(v);
 			case AttributeType.Raw: return castRaw(v);
 			case AttributeType.Comment: return castBlank(v);
-			default: return v;
+			default: throw new Error(`cannot cast type: ${this.ty} -> ${v}`);
 		}
 	}
 }
@@ -75,10 +78,14 @@ const castFloat = (x: string | undefined) => {
 
 const castBlank = (x: string | undefined) => undefined;
 
+const trueValues = ['true', '1', 't'];
+const falseValues = ['false', '0', 'f'];
+
 const castBoolean = (x: string | undefined) => {
 	if (x === undefined) { return false; }
-	if (['TRUE', '1'].includes(x)) { return true; }
-	if (['FALSE', '0'].includes(x)) { return false; }
+	const v = x.toLowerCase();
+	if (trueValues.includes(v)) { return true; }
+	if (falseValues.includes(v)) { return false; }
 	return false;
 };
 
