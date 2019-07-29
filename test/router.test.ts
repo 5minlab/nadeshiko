@@ -2,12 +2,11 @@ import express from 'express'
 import 'express-async-errors'
 import { myErrorHandler } from 'express-my-error-handler'
 import path from 'path'
-import Redis from 'ioredis'
 import RedisMock from 'ioredis-mock'
 import { makeRouter } from '../src/index'
 import request from 'supertest'
 
-const redis = new RedisMock() as Redis.Redis
+const redis = new RedisMock()
 const version = '20190729-104113'
 const dataPath = path.resolve(__dirname, 'testdata')
 const prefix = 'test'
@@ -52,8 +51,8 @@ afterAll(async () => {
 
 describe('GET /tables/:table', () => {
 	const ty = 'foo'
-	beforeAll(async () => await load())
-	afterAll(async () => await redis.flushdb())
+	beforeAll(async () => load())
+	afterAll(async () => redis.flushdb())
 
 	it('not exist', done => {
 		request(app)
@@ -70,8 +69,8 @@ describe('GET /tables/:table', () => {
 
 describe('GET /tables/:table/:id', () => {
 	const ty = 'foo'
-	beforeAll(async () => await load())
-	afterAll(async () => await redis.flushdb())
+	beforeAll(async () => load())
+	afterAll(async () => redis.flushdb())
 
 	it('table not found', done => {
 		request(app)
