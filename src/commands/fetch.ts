@@ -1,4 +1,4 @@
-import fs from 'mz/fs'
+import fse from 'fs-extra'
 import path from 'path'
 import _ from 'lodash'
 import { makeVersion } from '../helpers'
@@ -22,7 +22,7 @@ export const fetch = async (ds: DataSource, dataPath: string) => {
 	})
 
 	const dstPath = path.resolve(dataPath, version)
-	await fs.mkdir(dstPath)
+	await fse.mkdir(dstPath)
 
 	await metadata.save(dstPath)
 	const tasks = tables.map(table => {
