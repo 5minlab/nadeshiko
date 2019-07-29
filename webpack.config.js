@@ -69,7 +69,7 @@ module.exports = {
 						// https://webpack.js.org/guides/build-performance/#typescript-loader
 						'options': {
 							'transpileOnly': env === 'development' ? true : false,
-							'experimentalWatchApi': true,
+							'experimentalWatchApi': env === 'development' ? true : false,
 						},
 					},
 				],
