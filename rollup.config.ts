@@ -25,6 +25,7 @@ const globals = {
 	'googleapis': 'googleapis',
 	'path': 'path',
 	'assert': 'assert',
+	'fs-extra': 'fse',
 }
 
 export default {
@@ -53,8 +54,8 @@ export default {
 		include: 'src/**',
 	},
 	plugins: [
-		nodeBuiltins(),
 		nodeGlobals(),
+		nodeBuiltins(),
 		// Allow json resolution
 		json(),
 		// Compile TypeScript files
