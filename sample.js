@@ -2,7 +2,7 @@ const express = require('express');
 require('express-async-errors');
 const Redis = require('ioredis');
 const path = require('path');
-const nadeshiko = require('./dist/main');
+const nadeshiko = require('./dist/lib/nadeshiko');
 
 // TODO modify
 const secret = require('./secret/gdrive.json');

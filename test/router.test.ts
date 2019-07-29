@@ -3,7 +3,7 @@ import 'express-async-errors'
 import { myErrorHandler } from 'express-my-error-handler'
 import path from 'path'
 import RedisMock from 'ioredis-mock'
-import { makeRouter } from '../src/index'
+import { makeRouter } from '../src/router'
 import request from 'supertest'
 
 const redis = new RedisMock()
