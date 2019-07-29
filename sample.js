@@ -38,11 +38,16 @@ const port = 4000;
 app.listen(port, async () => {
 	console.log(`listen port=${port}`);
 
-	// get data
-	const table = new nadeshiko.TableCache(redis, prefix);
-	const ndsk = new nadeshiko.Nadeshiko(redis, prefix);
-	const key = ndsk.key('foo');
-	const items = await ndsk.mget('foo');
-	const item = await ndsk.get('foo', 1);
-	console.log({ key, items, item });
+	try {
+		// get data
+		const table = new nadeshiko.TableCache(redis, prefix);
+		const ndsk = new nadeshiko.Nadeshiko(redis, prefix);
+		const key = ndsk.key('foo');
+		const items = await ndsk.mget('foo');
+		const item = await ndsk.get('foo', 1);
+		console.log({ key, items, item });
+
+	} catch (err) {
+		console.error(err);
+	}
 });

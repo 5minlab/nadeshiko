@@ -13,7 +13,7 @@
     "start:server": "nodemon ./sample.js --watch ./dist/main.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "watch:test": "jest --watch",
+    "test:watch": "jest --watch",
     "lint": "tslint -p ./tsconfig.json",
     "ts-node": "ts-node --files"
   },

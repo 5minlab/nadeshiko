@@ -53,6 +53,12 @@ describe('Attribute', () => {
 	test('blank', () => {
 		expect(() => Attribute.make('')).toThrow();
 	});
+
+	test('comment', () => {
+		const f = Attribute.make('_comment');
+		expect(f.cast('content')).toBeUndefined();
+		expect(f.cast(undefined)).toBeUndefined();
+	});
 });
 
 describe('makeAttributes', () => {

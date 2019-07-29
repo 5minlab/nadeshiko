@@ -5,6 +5,7 @@ export enum AttributeType {
 	Boolean,
 	Date,
 	Raw,
+	Comment,
 }
 
 const attributeList: Array<{ ty: AttributeType, prefix: string }> = [
@@ -14,6 +15,7 @@ const attributeList: Array<{ ty: AttributeType, prefix: string }> = [
 	{ ty: AttributeType.Boolean, prefix: 'b_' },
 	{ ty: AttributeType.Date, prefix: 'd_' },
 	{ ty: AttributeType.Raw, prefix: 'r_' },
+	{ ty: AttributeType.Comment, prefix: '_' },
 ];
 
 export type AttributeValueType = (
@@ -48,6 +50,7 @@ export class Attribute {
 			case AttributeType.Date: return castDate(v);
 			case AttributeType.String: return castString(v);
 			case AttributeType.Raw: return castRaw(v);
+			case AttributeType.Comment: return castBlank(v);
 			default: return v;
 		}
 	}
@@ -69,6 +72,8 @@ const castFloat = (x: string | undefined) => {
 		return 0;
 	}
 };
+
+const castBlank = (x: string | undefined) => undefined;
 
 const castBoolean = (x: string | undefined) => {
 	if (x === undefined) { return false; }
