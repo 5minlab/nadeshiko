@@ -1,14 +1,14 @@
 export enum ConstraintType {
 	ForeignKey = 'fk',
-	Unique = 'unique',
+	Unique = 'unique'
 }
 
 export interface Constraint {
-	type: ConstraintType;
-	firstTable: string;
-	firstAttribute: string;
-	secondTable: string;
-	secondAttribute: string;
+	type: ConstraintType
+	firstTable: string
+	firstAttribute: string
+	secondTable: string
+	secondAttribute: string
 }
 
 export const makeConstraint = (row: string[]): Constraint => {
@@ -18,20 +18,24 @@ export const makeConstraint = (row: string[]): Constraint => {
 		firstTable: row[1],
 		firstAttribute: row[2],
 		secondTable: row[3],
-		secondAttribute: row[4],
-	};
-};
+		secondAttribute: row[4]
+	}
+}
 
-export const makeConstraints = (values: string[][]): Constraint[] => {
-	if (values === undefined) { return []; }
+export const makeConstraints = (
+	values: string[][] | undefined
+): Constraint[] => {
+	if (values === undefined) {
+		return []
+	}
 	// else...
-	return values.map((row) => makeConstraint(row));
-};
+	return values.map(row => makeConstraint(row))
+}
 
 export class ConstraintTable {
-	private readonly constraints: Constraint[];
+	private readonly constraints: Constraint[]
 
 	constructor(constraints: Constraint[]) {
-		this.constraints = constraints;
+		this.constraints = constraints
 	}
 }
