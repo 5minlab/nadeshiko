@@ -60,7 +60,7 @@
     "dayjs": "^1.8.15",
     "express": "^4.17.1",
     "express-my-error-handler": "^1.1.0",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.0",
     "googleapis": "^41.0.1",
     "http-errors": "^1.7.3",
     "ioredis": "^4.11.2",
